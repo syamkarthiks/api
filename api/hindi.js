@@ -10,13 +10,14 @@ export default async function handler(req, res) {
     console.log('Fetching video from URL:', url);
 
     const response = await axios.get(url, {
-      responseType: 'arraybuffer'
+      responseType: 'stream',
       headers: {
         'User-Agent': 'Mozilla/5.0'
       }
     });
+
     res.setHeader('Content-Type', 'video/mp4');
-    res.send(response.data);
+    response.data.pipe(res);
   } catch (error) {
     console.error('Error fetching video:', error);
     res.status(500).json({ error: 'Failed to fetch video.', details: error.message });
